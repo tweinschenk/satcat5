@@ -24,7 +24,7 @@ variable sgmii_gtx_refclk_hz [expr {round($sgmii_gtx_refclk_mhz * 1000000)}]
 # Create a basic IP-core project.
 set ip_name "port_sgmii_gtx_${sgmii_gtx_loc}"
 set ip_vers "1.0"
-set ip_disp "SatCat5 SGMII PHY (MGT)"
+set ip_disp "SatCat5 SGMII PHY (MGT) ${sgmii_gtx_loc} ${sgmii_gtx_refclk_mhz}"
 set ip_desc "SatCat5 SGMII port using GTX-SERDES."
 
 variable ip_root [file normalize [file dirname [info script]]]
@@ -57,6 +57,7 @@ if {$part_family == "7series"} {
 # Add all required source files:
 ipcore_add_file $src_dir/common/*.vhd
 ipcore_add_file $src_dir/xilinx/port_sgmii_gtx.vhd
+ipcore_add_file $src_dir/xilinx/retrigger_autonegeotiation.vhd
 ipcore_add_top  $ip_root/wrap_port_sgmii_gtx.vhd
 
 # Connect all interface ports.
@@ -76,8 +77,6 @@ ipcore_add_param SHARED_EN bool true\
     {Include shared logic? Required for first MGT in each quad.}
 ipcore_add_param GTX_LOCATION string $sgmii_gtx_loc\
     {Transceiver identifier} false
-ipcore_add_param SHARED_QPLL string $shared_qpll\
-    {Does this MGT use a shared QPLL resource?} false
 ipcore_add_param REFCLK_FREQ_HZ string $sgmii_gtx_refclk_hz\
     {Frequency of GTX reference clock} false
 ipcore_add_param CLKIN_FREQ_HZ string $bufg_freq_hz\

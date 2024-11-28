@@ -116,6 +116,9 @@ component sgmii_gtx0 is     -- Shared logic, no QPLL
     gmii_rx_er              : out std_logic;
     gmii_isolate            : out std_logic;
     configuration_vector    : in std_logic_vector(4 downto 0);
+    an_adv_config_vector    : in std_logic_vector(15 downto 0);
+    an_restart_config       : in std_logic;
+    an_interrupt            : out std_logic;
     speed_is_10_100         : in std_logic;
     speed_is_100            : in std_logic;
     status_vector           : out std_logic_vector(15 downto 0);
@@ -149,7 +152,12 @@ component sgmii_gtx1 is     -- No shared logic, no QPLL
     gmii_rx_er              : out std_logic;
     gmii_isolate            : out std_logic;
     configuration_vector    : in std_logic_vector(4 downto 0);
+    an_adv_config_vector    : in std_logic_vector(15 downto 0);
+    speed_is_10_100         : in std_logic;
+    speed_is_100            : in std_logic;
     status_vector           : out std_logic_vector(15 downto 0);
+    an_restart_config       : in std_logic;
+    an_interrupt            : out std_logic;
     reset                   : in std_logic;
     signal_detect           : in std_logic);
 end component;
@@ -230,6 +238,9 @@ end component;
 signal txrx_pwren       : std_logic;
 signal tx_pkten         : std_logic;
 signal config_vec       : std_logic_vector(4 downto 0);
+signal autoneg_vec      : std_logic_vector(15 downto 0);
+signal an_interrput_s   : std_logic;
+signal an_restart_config_s: std_logic;
 signal status_vec       : std_logic_vector(15 downto 0);
 signal status_linkok    : std_logic;
 signal status_sync      : std_logic;
@@ -366,6 +377,33 @@ config_vec <= (
     2 => port_shdn,             -- Power-down strobe
     1 => '0',                   -- Disable loopback
     0 => '0');                  -- Bidirectional mode
+    
+autoneg_vec <= (
+    15 => '1',
+    14 => '1',
+    13 => '0',
+    12 => '1',
+    11 => '1',
+    10 => '0',
+    9 => '0',
+    8 => '0',
+    7 => '0',
+    6 => '0',
+    5 => '0',
+    4 => '0',
+    3 => '0',
+    2 => '0',
+    1 => '0',
+    0 => '1');
+    
+retrigger : entity work.retrigger_autonegotiation
+    port map(
+    clk_50mhz               => clkin_bufg,
+    an_restart_config_o     => an_restart_config_s,
+    an_interrupt_i          => an_interrput_s
+    );
+    
+status_vector_o <= status_vec; 
 
 status_linkok   <= status_vec(0);   -- SGMII link ready for use
 status_sync     <= status_vec(1);   -- 8b/10b initial sync
@@ -449,6 +487,9 @@ gen_variant0 : if (SHARED_EN) and (not SHARED_QPLL) generate
         gmii_rx_er              => gmii_rx_er,
         gmii_isolate            => open,
         configuration_vector    => config_vec,      -- See PG047, Table 2-39
+        an_adv_config_vector    => autoneg_vec,
+        an_restart_config       => an_restart_config_s,
+        an_interrupt            => an_interrput_s,
         speed_is_10_100         => '0',             -- Always 1000 Mbps
         speed_is_100            => '0',             -- Always 1000 Mbps
         status_vector           => status_vec,      -- See PG047, Table 2-41
@@ -483,6 +524,11 @@ gen_variant1 : if (not SHARED_EN) and (not SHARED_QPLL) generate
         gmii_rx_er              => gmii_rx_er,
         gmii_isolate            => open,
         configuration_vector    => config_vec,      -- See PG047, Table 2-39
+        an_adv_config_vector    => autoneg_vec,
+        an_restart_config       => an_restart_config_s,
+        an_interrupt            => an_interrput_s,
+        speed_is_10_100         => '0',             -- Always 1000 Mbps
+        speed_is_100            => '0',             -- Always 1000 Mbpsb
         status_vector           => status_vec,      -- See PG047, Table 2-41
         reset                   => port_shdn,       -- Reset the entire core
         signal_detect           => '1');

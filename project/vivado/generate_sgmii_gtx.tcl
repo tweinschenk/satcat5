@@ -38,7 +38,7 @@ proc generate_sgmii_gtx {gt_loc {core_name sgmii_gtx0} {include_shared_logic 1} 
         CONFIG.RefClkRate           $refclk_freq_mhz\
         CONFIG.Management_Interface false\
         CONFIG.MaxDataRate          1G\
-        CONFIG.SGMII_PHY_Mode       false\
+        CONFIG.SGMII_PHY_Mode       true\
         CONFIG.Standard             SGMII\
     ] $ip_obj
     if {$include_shared_logic} {

@@ -13,7 +13,7 @@
 # Define parts associated with each family:
 variable families_7series {spartan7 artix7 kintex7 virtex7 zynq}
 variable families_ultrascale {kintexu virtexu}
-variable families_ultraplus {kintexuplus virtexuplus zynquplus zynquplusRFSOC}
+variable families_ultraplus {kintexuplus virtexuplus artixuplus zynquplus zynquplusRFSOC}
 
 # Check the target part against each of the above lists.
 set part_family [get_property family [get_parts -of_objects [current_project]]]

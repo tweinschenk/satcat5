@@ -80,7 +80,9 @@ entity port_sgmii_gtx is
 
     -- Additional clocks.
     clkin_bufg  : in  std_logic;    -- IDELAYCTRL or DRP clock
-    clkout_125  : out std_logic);   -- Optional 125 MHz output
+    clkout_125  : out std_logic;   -- Optional 125 MHz output
+    --debug interface
+    status_vector_o: out std_logic_vector(15 downto 0));
 end port_sgmii_gtx;
 
 architecture port_sgmii_gtx of port_sgmii_gtx is

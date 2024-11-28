@@ -69,6 +69,7 @@ ipcore_add_diffclock GTREFCLK gtrefclk slave $sgmii_gtx_refclk_hz
 ipcore_add_sgmii SGMII sgmii master
 ipcore_add_gpio shared_out
 ipcore_add_gpio shared_in
+ipcore_add_gpio status_vector_o
 
 # Set parameters
 ipcore_add_param AUTONEG_EN bool true\

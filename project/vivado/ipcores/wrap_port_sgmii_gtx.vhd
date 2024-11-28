@@ -67,7 +67,11 @@ entity wrap_port_sgmii_gtx is
 
     -- System clock and reset.
     clkin_bufg  : in  std_logic;            -- IDELAYCTRL or DRP clock
-    reset_p     : in  std_logic);           -- Reset / shutdown
+    reset_p     : in  std_logic;            -- Reset / shutdown
+    
+    --debug interface
+    status_vector_o : out std_logic_vector(15 downto 0));
+    
 end wrap_port_sgmii_gtx;
 
 architecture wrap_port_sgmii_gtx of wrap_port_sgmii_gtx is
@@ -130,6 +134,8 @@ u_wrap : entity work.port_sgmii_gtx
     shared_out  => shared_out,
     shared_in   => shared_in,
     clkin_bufg  => clkin_bufg,
-    clkout_125  => open);
+    clkout_125  => open,
+    status_vector_o => status_vector_o
+    );
 
 end wrap_port_sgmii_gtx;

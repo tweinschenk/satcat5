@@ -93,7 +93,6 @@ component sgmii_gtx0 is     -- Shared logic, no QPLL
     gtrefclk_p              : in  std_logic;
     gtrefclk_n              : in  std_logic;
     gtrefclk_out            : out std_logic;
-    gtrefclk_bufg_out       : out std_logic;
     txp                     : out std_logic;
     txn                     : out std_logic;
     rxp                     : in std_logic;
@@ -403,7 +402,7 @@ shared_out <= (
     9 => xil_qpll_ref,
     others => '0');
 
-gen_shared : if SHARED_EN generate
+gen_shared : if (not SHARED_EN) generate
     xil_gtrefclk    <= shared_in(0);
     xil_gtrefbuf    <= shared_in(1);
     xil_userclk     <= shared_in(2);
